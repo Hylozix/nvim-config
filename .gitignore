@@ -1,0 +1,9 @@
+# 只提交配置本身，不提交任何运行时/缓存产物。
+# 插件安装在 nvim-data 目录（%LOCALAPPDATA%\nvim-data），本来就不在本仓库里，
+# 所以这里主要是防止误提交编辑期产生的临时文件。
+*.log
+*.tmp
+.DS_Store
+Session.vim
+shada/
+tags
