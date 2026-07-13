@@ -18,6 +18,11 @@ keymap.set("v", "J", "5j", opts) -- 选中状态下按 J，选区向下扩展 5 
 keymap.set("v", "K", "5k", opts) -- 选中状态下按 K，选区向上扩展 5 行
 keymap.set("v", "L", "$", opts)  -- 选中状态下按 L，选区右端跳到行尾
 
+-- 终端模式：双击 Esc 回到 Normal 模式（原生组合键 <C-\><C-n> 太难按）
+-- 保留单击 Esc 的原始功能，这样终端里的程序（如 lazygit、fzf）依然能收到 Esc 键
+keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", opts)
+keymap.set("t", "jj", "<C-\\><C-n>", opts) -- 和插入模式的 jj 习惯保持一致
+
 -- 普通模式：gp = 粘贴 0 寄存器内容，光标停在粘贴内容末尾（保留原生 gp 的光标特性）
 keymap.set("n", "gp", '"0gp', opts)
 -- 普通模式：gP = 在光标前上方粘贴 0 寄存器内容，光标停在粘贴内容开头
