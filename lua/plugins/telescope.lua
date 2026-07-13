@@ -2,7 +2,9 @@
 -- 依赖命令行工具 ripgrep(rg) 做全文搜索：scoop install ripgrep
 return {
   "nvim-telescope/telescope.nvim",
-  branch = "0.1.x",
+  -- 用 master 活跃分支：旧的 0.1.x 分支停更了，其预览器还在调用
+  -- nvim-treesitter master 才有的 ft_to_lang()，和 main 分支一起用会报错
+  branch = "master",
   cmd = "Telescope",
   dependencies = { "nvim-lua/plenary.nvim" },
   keys = {
