@@ -32,6 +32,24 @@ opt.sidescrolloff = 8     -- 光标左右至少保留 8 列可见区域
 opt.updatetime = 300      -- 编辑器更新间隔（毫秒）：影响插件响应速度，比如语法检查、自动保存
 opt.timeoutlen = 400      -- 组合键超时时间（毫秒）：按 Leader 键后，等待下一个按键的最长时间
 
+--代码折叠（za 开关当前折叠，zR 全部展开，zM 全部折叠）
+opt.foldmethod = "expr"   -- 折叠方式：按表达式计算（不设置的话默认 manual，za 会提示找不到折叠）
+opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- 用 Treesitter 语法树识别函数/类/代码块的折叠范围
+opt.foldlevel = 99        -- 打开文件时所有折叠默认展开（数字越大展开层级越深）
+opt.foldlevelstart = 99   -- 新缓冲区的初始折叠层级，同上
+opt.foldtext = ""         -- 折叠行保留语法高亮显示首行内容，而不是灰色的 "+-- N lines" 摘要
+
+
+--Shell 设置：让 :!命令 和 :terminal 使用 PowerShell 7（Windows 默认是 cmd.exe，没有 ls 等命令）
+--下面几个 shellxxx 选项是官方推荐的配套写法（:help shell-powershell），保证输出重定向和编码正确
+opt.shell = "pwsh"
+opt.shellcmdflag = "-NoLogo -NonInteractive -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';$PSStyle.OutputRendering='plaintext';Remove-Alias -Force -ErrorAction SilentlyContinue tee;"
+opt.shellredir = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode'
+opt.shellpipe = '2>&1 | %%{ "$_" } | tee %s; exit $LastExitCode'
+opt.shellquote = ""
+opt.shellxquote = ""
+
+
 --编码设置
 opt.encoding = "utf-8"    -- Neovim 内部默认使用 UTF-8 编码
 opt.fileencoding = "utf-8"-- 保存文件时默认使用 UTF-8 编码
