@@ -4,6 +4,8 @@ require("config.options")
 require("config.keymaps")
 --加载自动命令
 require("config.autocmds")
+--加载 Neovide 图形界面专属配置（终端里启动时文件开头会直接 return，无副作用）
+require("config.neovide")
 
 
 

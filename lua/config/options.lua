@@ -43,7 +43,7 @@ opt.foldtext = ""         -- 折叠行保留语法高亮显示首行内容，而
 --Shell 设置：让 :!命令 和 :terminal 使用 PowerShell 7（Windows 默认是 cmd.exe，没有 ls 等命令）
 --下面几个 shellxxx 选项是官方推荐的配套写法（:help shell-powershell），保证输出重定向和编码正确
 opt.shell = "pwsh"
-opt.shellcmdflag = "-NoLogo -NonInteractive -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';$PSStyle.OutputRendering='plaintext';Remove-Alias -Force -ErrorAction SilentlyContinue tee;"
+opt.shellcmdflag = "-NoLogo -NonInteractive -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';$PSStyle.OutputRendering='plaintext';Remove-Alias -Force -ErrorAction SilentlyContinue tee,diff;"
 opt.shellredir = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode'
 opt.shellpipe = '2>&1 | %%{ "$_" } | tee %s; exit $LastExitCode'
 opt.shellquote = ""
