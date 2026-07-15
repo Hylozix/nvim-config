@@ -5,8 +5,8 @@ return {
   event = "InsertEnter",
   dependencies = { "rafamadriz/friendly-snippets" }, -- 常用代码片段库
   opts = {
-    -- 键位预设：<C-y> 确认，<C-space> 手动触发，<C-e> 关闭，方向键上下选
-    keymap = { preset = "default" },
+    -- 键位预设：<Tab> 确认补全（菜单弹出时），<C-space> 手动触发，<C-e> 关闭，方向键上下选
+    keymap = { preset = "super-tab" },
     appearance = { nerd_font_variant = "mono" },
     -- 补全来源：LSP、路径、代码片段、当前缓冲区词
     sources = { default = { "lsp", "path", "snippets", "buffer" } },
