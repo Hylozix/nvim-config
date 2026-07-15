@@ -11,12 +11,13 @@ return {
   config = function()
     -- 想启用哪些语言服务器就写在这里（换电脑会自动下载）
     -- lua_ls=Lua  ts_ls=JS/TS  html/cssls/jsonls  bashls=Bash  pyright=Python
-    -- clangd=C/C++  rust_analyzer=Rust
+    -- clangd=C/C++  rust_analyzer=Rust  marksman=Markdown
     -- 注：C# 用 roslyn，由 plugins/roslyn.lua 单独驱动，不在这个列表里
     local servers = {
       "lua_ls", "ts_ls", "html", "cssls", "jsonls", "bashls", "pyright",
       "clangd",         -- C / C++
       "rust_analyzer",  -- Rust
+      "marksman",       -- Markdown（标题跳转、链接补全、引用查找）
     }
 
     require("mason").setup()
