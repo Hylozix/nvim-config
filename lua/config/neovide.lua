@@ -68,6 +68,22 @@ vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
     vim.g.neovide_input_ime = (ev.event == "CmdlineEnter")
   end,
 })
+-- 终端模式（:terminal 里打字）不会触发 InsertEnter，要单独放开 IME，
+-- 否则在内置终端里永远切不出中文输入法
+vim.api.nvim_create_autocmd("ModeChanged", {
+  group = ime_group,
+  pattern = "*:t",  -- 进入终端模式
+  callback = function()
+    vim.g.neovide_input_ime = true
+  end,
+})
+vim.api.nvim_create_autocmd("ModeChanged", {
+  group = ime_group,
+  pattern = "t:*",  -- 离开终端模式，切回英文，快捷键不被输入法拦截
+  callback = function()
+    vim.g.neovide_input_ime = false
+  end,
+})
 
 -------------剪贴板便捷键-------------
 -- Ctrl+Shift+V：在插入/命令行/终端模式直接粘贴系统剪贴板

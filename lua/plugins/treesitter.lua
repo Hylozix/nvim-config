@@ -21,8 +21,11 @@ return {
     end
 
     -- 需要安装的语言解析器，按需添加（异步下载编译，需要 gcc/zig 和 tree-sitter CLI）
-    -- 注：markdown/lua/c/vim 等 Neovim 0.12 已自带，不用列在这里
+    -- 注：Neovim 0.12 虽自带 markdown/lua/c/vim 的解析器，但只带高亮查询、
+    -- 不带缩进查询（indents.scm），想要按 o/回车 自动缩进仍需在这里安装一份
     ts.install({
+      "c",
+      "cpp",
       "javascript",
       "typescript",
       "html",
@@ -41,7 +44,12 @@ return {
         if not lang then return end
         if pcall(vim.treesitter.start, ev.buf, lang) then
           -- 基于语法树的智能缩进（等价于旧版的 indent = { enable = true }）
-          vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          -- 只在该语言有缩进查询文件时才接管，否则保留 Vim 默认缩进
+          -- （比如 C 的 cindent），避免设了 indentexpr 却永远返回 0 导致不缩进
+          local ok, query = pcall(vim.treesitter.query.get, lang, "indents")
+          if ok and query then
+            vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
         end
       end,
     })
