@@ -34,6 +34,7 @@ return {
       "json",
       "bash",
       "python",
+      "c_sharp"
     })
 
     -- 打开文件时：有对应解析器就启用语法树高亮和缩进（pcall 保证没有解析器时静默跳过）

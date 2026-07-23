@@ -1,5 +1,5 @@
 --设置Leader键为空格
-vim.g.mapleader = " " --全局设置
+vim.g.mapleader = " "      --全局设置
 vim.g.maplocalleader = " " --局部设置
 
 
@@ -8,15 +8,16 @@ local keymap = vim.keymap
 -- 所有映射共用的选项：noremap 防止递归触发，silent 不在命令行回显
 local opts = { noremap = true, silent = true }
 
-keymap.set("i","jj","<ESC>",opts)
-keymap.set("n", "H", "^", opts)  -- H 跳转到当前行第一个非空白字符（跳过缩进空格）
-keymap.set("n", "J", "5j", opts) -- J 向下连续移动 5 行，等价于按 5 次 j
-keymap.set("n", "K", "5k", opts) -- K 向上连续移动 5 行，等价于按 5 次 k
-keymap.set("n", "L", "$", opts)  -- L 跳转到当前行最后一个字符（行尾）
-keymap.set("v", "H", "^", opts)  -- 选中状态下按 H，选区左端跳到行首
-keymap.set("v", "J", "5j", opts) -- 选中状态下按 J，选区向下扩展 5 行
-keymap.set("v", "K", "5k", opts) -- 选中状态下按 K，选区向上扩展 5 行
-keymap.set("v", "L", "$", opts)  -- 选中状态下按 L，选区右端跳到行尾
+keymap.set("i", "jj", "<ESC>", opts)
+
+-- keymap.set("n", "H", "^", opts)  -- H 跳转到当前行第一个非空白字符（跳过缩进空格）
+-- keymap.set("n", "J", "5j", opts) -- J 向下连续移动 5 行，等价于按 5 次 j
+-- keymap.set("n", "K", "5k", opts) -- K 向上连续移动 5 行，等价于按 5 次 k
+-- keymap.set("n", "L", "$", opts)  -- L 跳转到当前行最后一个字符（行尾）
+-- keymap.set("v", "H", "^", opts)  -- 选中状态下按 H，选区左端跳到行首
+-- keymap.set("v", "J", "5j", opts) -- 选中状态下按 J，选区向下扩展 5 行
+-- keymap.set("v", "K", "5k", opts) -- 选中状态下按 K，选区向上扩展 5 行
+-- keymap.set("v", "L", "$", opts)  -- 选中状态下按 L，选区右端跳到行尾
 
 -- 终端模式：双击 Esc 回到 Normal 模式（原生组合键 <C-\><C-n> 太难按）
 -- 保留单击 Esc 的原始功能，这样终端里的程序（如 lazygit、fzf）依然能收到 Esc 键
