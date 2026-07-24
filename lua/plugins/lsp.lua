@@ -28,9 +28,14 @@ return {
       capabilities = require("blink.cmp").get_lsp_capabilities(),
     })
 
-    -- lua_ls 专属：告诉它 vim 是全局变量，否则编辑本配置时满屏警告
+    -- lua_ls 专属：告诉它 vim 是全局变量，并打开行内类型提示
     vim.lsp.config("lua_ls", {
-      settings = { Lua = { diagnostics = { globals = { "vim" } } } },
+      settings = {
+        Lua = {
+          diagnostics = { globals = { "vim" } },
+          hint = { enable = true },
+        },
+      },
     })
 
     -- 只有某个缓冲区真正挂上 LSP 后，才绑定这些快捷键
@@ -50,6 +55,19 @@ return {
         map("<leader>d", vim.diagnostic.open_float, "查看当前行诊断")
         map("[d", function() vim.diagnostic.jump({ count = -1 }) end, "上一个诊断")
         map("]d", function() vim.diagnostic.jump({ count = 1 }) end, "下一个诊断")
+
+        -- Inlay hints：行内显示类型/参数名（Neovim 内置，无需插件）
+        -- 服务器不支持时静默跳过；<leader>ci 可临时关掉（觉得吵时）
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if client and client:supports_method("textDocument/inlayHint", ev.buf) then
+          vim.lsp.inlay_hint.enable(true, { bufnr = ev.buf })
+          map("<leader>ci", function()
+            vim.lsp.inlay_hint.enable(
+              not vim.lsp.inlay_hint.is_enabled({ bufnr = ev.buf }),
+              { bufnr = ev.buf }
+            )
+          end, "切换 Inlay Hints")
+        end
       end,
     })
   end,

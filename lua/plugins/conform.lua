@@ -7,13 +7,14 @@ return {
   cmd = { "ConformInfo" },
   opts = {
     formatters_by_ft = {
-      -- lua = { "stylua" },
-      -- python = { "black" },
-      -- javascript = { "prettier" },
-      -- typescript = { "prettier" },
-      -- html = { "prettier" },
-      -- css = { "prettier" },
-      -- json = { "prettier" },
+      lua = { "stylua" },
+      python = { "black" },
+      javascript = { "prettier" },
+      typescript = { "prettier" },
+      html = { "prettier" },
+      css = { "prettier" },
+      json = { "prettier" },
+      cs = { "csharpier" },
     },
     -- 保存时格式化；没有配置专用格式化器时，回退用 LSP 的格式化能力
     format_on_save = { timeout_ms = 500, lsp_format = "fallback" },
