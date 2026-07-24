@@ -14,8 +14,9 @@ return {
       desc = "Flash 跳转",
     },
     {
+      -- 故意不含 x（可视模式）：S 留给 surround「给选区加括号」
       "S",
-      mode = { "n", "x", "o" },
+      mode = { "n", "o" },
       function()
         require("flash").treesitter()
       end,

@@ -10,6 +10,7 @@ return {
       { "<leader>h", group = "Git hunk" },
       { "<leader>c", group = "代码 (code)" },
       { "<leader>b", group = "缓冲区 (buffer)" },
+      { "<leader>t", group = "主题 (theme)" },
     },
   },
 }

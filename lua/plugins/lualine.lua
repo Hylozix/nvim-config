@@ -8,7 +8,7 @@ return {
   event = "VeryLazy",
   opts = {
     options = {
-      theme = "tokyonight", -- 跟随主题
+      theme = "auto", -- 跟随当前 colorscheme（换 kanagawa/tokyonight 都不用再改）
       globalstatus = true,  -- 整个窗口共用一条状态栏，而不是每个分屏一条
       section_separators = "",
       component_separators = "|",
