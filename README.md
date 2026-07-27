@@ -22,10 +22,10 @@ git clone <你的仓库地址> ~/.config/nvim
 
 - **Shell**：Windows 用 `pwsh`，Linux/macOS 用 `bash`（见 `lua/config/options.lua`）
 - **telescope-fzf-native**：Windows 用 MinGW cmake，Linux 用 `make`
-- **无权限保存系统文件**：不要用 `:w !sudo tee %`（无 TTY，sudo 要不到密码）。用：
-  - `<leader>W` 或 `:SudaWrite`（`suda.nvim`）
-  - 或在家目录编辑后 `sudo cp` 到目标路径
-  - 或 `sudo env "PATH=$PATH" nvim /etc/...`（让 root 也能找到 mise 的 nvim）
+- **编辑系统文件（无额外插件）**：mise 的 nvim 不在 root PATH，建议：
+  - `sudo env "PATH=$PATH" nvim /etc/...`（推荐）
+  - 或先在家目录编辑，再 `sudo cp` 到目标路径
+  - 不要用 `:w !sudo tee %`（nvim 的 `!` 通常没有 TTY，sudo 要不到密码）
 
 ## 前置依赖
 
@@ -185,7 +185,6 @@ lua/
 | `<leader>hs` / `<leader>hp` | 暂存 / 预览 Git hunk |
 | `[b` / `]b` / `<leader>bd` | 上/下一个 / 关闭 缓冲区 |
 | `<leader>wr` / `<leader>ws` | 会话搜索 / 保存 |
-| `<leader>W` | 用 sudo 保存当前文件（suda.nvim） |
 | `gcc` / `gc`(选区) | 注释（nvim 内置） |
 | `jj` | 插入模式退出到 Normal |
 | `gp` / `gP` | 粘贴 0 号寄存器（不被删除覆盖） |
