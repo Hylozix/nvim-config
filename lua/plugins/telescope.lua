@@ -11,8 +11,10 @@ return {
     "nvim-lua/plenary.nvim",
     {
       "nvim-telescope/telescope-fzf-native.nvim",
-      -- Windows + scoop mingw：必须指定 MinGW Makefiles，否则 cmake 会找 nmake 失败
-      build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" && cmake --build build --config Release && cmake --install build --prefix build',
+      -- Windows：MinGW Makefiles；Linux/macOS：make
+      build = (vim.fn.has("win32") == 1)
+          and 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" && cmake --build build --config Release && cmake --install build --prefix build'
+          or "make",
     },
   },
   keys = {
