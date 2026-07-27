@@ -9,19 +9,22 @@ return {
     "saghen/blink.cmp", -- 提供补全能力，注入到 LSP
   },
   config = function()
-    -- 想启用哪些语言服务器就写在这里（换电脑会自动下载）
-    -- lua_ls=Lua  ts_ls=JS/TS  html/cssls/jsonls  bashls=Bash  pyright=Python
-    -- clangd=C/C++  rust_analyzer=Rust  marksman=Markdown
+    -- 由 Mason 自动下载的服务器（换电脑会自动装）
     -- 注：C# 用 roslyn，由 plugins/roslyn.lua 单独驱动，不在这个列表里
-    local servers = {
+    -- 注：clangd 不放这里——Mason 在部分平台（如 OCI ARM）无预编译包；改用系统 apt/dnf 的 clangd
+    local mason_servers = {
       "lua_ls", "ts_ls", "html", "cssls", "jsonls", "bashls", "pyright",
-      "clangd",         -- C / C++
-      "rust_analyzer",  -- Rust
-      "marksman",       -- Markdown（标题跳转、链接补全、引用查找）
+      "rust_analyzer", -- Rust
+      "marksman",      -- Markdown（标题跳转、链接补全、引用查找）
+    }
+
+    -- 系统包安装的服务器（不经过 Mason）
+    local system_servers = {
+      "clangd", -- C / C++：sudo apt install clangd / sudo dnf install clang-tools-extra
     }
 
     require("mason").setup()
-    require("mason-lspconfig").setup({ ensure_installed = servers })
+    require("mason-lspconfig").setup({ ensure_installed = mason_servers })
 
     -- 用 blink.cmp 的补全能力扩展所有 LSP（这样补全才有 LSP 来源）
     vim.lsp.config("*", {
@@ -37,6 +40,9 @@ return {
         },
       },
     })
+
+    -- 启用 Mason 列表 + 系统 clangd（走 PATH 里的 clangd）
+    vim.lsp.enable(vim.list_extend(vim.deepcopy(mason_servers), system_servers))
 
     -- 只有某个缓冲区真正挂上 LSP 后，才绑定这些快捷键
     -- 注意：故意避开你已有的 H/J/K/L 导航键和 <leader>e（文件树）
