@@ -18,25 +18,87 @@ git clone <你的仓库地址> ~/.config/nvim
 首次启动还会自动做两件事——treesitter 编译语法解析器、mason 下载 LSP 服务器，
 等右下角进度跑完重启一次即可。
 
+### Windows / Linux 已适配的点
+
+- **Shell**：Windows 用 `pwsh`，Linux/macOS 用 `bash`（见 `lua/config/options.lua`）
+- **telescope-fzf-native**：Windows 用 MinGW cmake，Linux 用 `make`
+- **无权限保存系统文件**：不要用 `:w !sudo tee %`（无 TTY，sudo 要不到密码）。用：
+  - `<leader>W` 或 `:SudaWrite`（`suda.nvim`）
+  - 或在家目录编辑后 `sudo cp` 到目标路径
+  - 或 `sudo env "PATH=$PATH" nvim /etc/...`（让 root 也能找到 mise 的 nvim）
+
 ## 前置依赖
 
-| 依赖 | 用途 | Windows 安装 |
-|------|------|--------------|
-| **git** | lazy 拉取插件 | `winget install Git.Git` |
-| **C 编译器** | treesitter / telescope-fzf-native 编译 | `scoop install mingw` 或 `scoop install zig` |
-| **cmake** | telescope-fzf-native 编译 | `scoop install cmake` |
-| **Node.js** | mason 安装大量 LSP（ts/html/css/json/bash/pyright 等靠 npm） | `scoop install nodejs-lts` |
-| **ripgrep** | telescope 全文搜索 | `scoop install ripgrep` |
-| **fd**（可选） | telescope 找文件加速 | `scoop install fd` |
-| **Nerd Font** | 图标显示 | [nerdfonts.com](https://www.nerdfonts.com/)，Neovide 默认 Maple Mono NF CN |
+### 通用依赖（Windows / Linux 都要）
 
-> ⚠️ 不装 C 编译器，treesitter 语法高亮会安装失败。  
-> ⚠️ fzf-native 编译需 **cmake + mingw**；失败时 telescope 仍可用，只是搜索略慢。
+| 依赖 | 用途 | Windows（scoop / winget） | Linux（RHEL / Oracle Linux / Fedora） |
+|------|------|---------------------------|---------------------------------------|
+| **git** | lazy 拉取插件 | `winget install Git.Git` | `sudo dnf install -y git` |
+| **Neovim** | 编辑器本体 | `scoop install neovim` | `mise use -g neovim@latest` 或系统包 |
+| **C 编译器 + make** | treesitter / fzf-native 编译 | `scoop install mingw`（或 `zig`） | `sudo dnf install -y gcc gcc-c++ make` |
+| **cmake** | Windows 上 fzf-native 编译 | `scoop install cmake` | 一般不需要（Linux 用 `make`）；可选 `sudo dnf install -y cmake` |
+| **unzip** | 解压部分安装包 | 系统自带或 scoop | `sudo dnf install -y unzip` |
+| **Node.js** | mason 装 LSP；`tree-sitter-cli` 依赖 npm | `scoop install nodejs-lts` | `mise use -g node@22` |
+| **tree-sitter CLI** | nvim-treesitter 编译语法解析器 | `npm install -g tree-sitter-cli` | `npm install -g tree-sitter-cli` |
+| **ripgrep** | telescope 全文搜索 | `scoop install ripgrep` | `mise use -g ripgrep` 或 `sudo dnf install -y ripgrep` |
+| **fd**（可选） | telescope 找文件加速 | `scoop install fd` | `mise use -g fd` |
+| **Nerd Font** | 图标显示（GUI / 本地终端） | [nerdfonts.com](https://www.nerdfonts.com/)，Neovide 默认 Maple Mono NF CN | SSH 用本地终端字体即可 |
 
-**按语言额外需要的工具链**（只写对应语言时才装，mason 只给 LSP 本体，工具链要另装）：
+> ⚠️ **不装 C 编译器**，treesitter / fzf-native 会编译失败。  
+> ⚠️ **不装 `tree-sitter` CLI**，`:TSInstall` / `:TSUpdate` 会报 `ENOENT: 'tree-sitter'`。  
+> ⚠️ Windows 上 fzf-native 需要 **cmake + mingw**；Linux 上配置已按系统自动用 `make`（见 `lua/plugins/telescope.lua`）。编译失败时 telescope 仍可用，只是搜索略慢。  
+> ⚠️ **gcc / make / unzip** 属于系统工具链，Linux 上用 `dnf` 装；**node / neovim / ripgrep** 可用 [mise](https://mise.jdx.dev/) 按用户安装（类似 scoop，版本好切换）。
 
-| 语言 | 工具链 | 安装 |
-|------|--------|------|
+### Linux 推荐安装顺序（OCI / 服务器）
+
+系统工具链（需要 sudo，装一次即可）：
+
+```bash
+sudo dnf install -y git gcc gcc-c++ make cmake unzip
+```
+
+用户级工具（以 `mise` 为例，装在当前用户家目录）：
+
+```bash
+# 安装 mise
+curl https://mise.run | sh
+echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc
+source ~/.bashrc
+
+# 运行时与 CLI
+mise use -g node@22 neovim@latest ripgrep fd
+
+# treesitter 需要的 CLI（装完 node 后）
+npm install -g tree-sitter-cli
+which tree-sitter   # 应能找到命令
+```
+
+克隆本配置后打开 nvim：
+
+```bash
+git clone https://github.com/Hylozix/nvim-config.git ~/.config/nvim
+nvim
+# 首次等 lazy / treesitter / mason 跑完，再重启一次
+# 若 fzf-native 编译失败：:Lazy build telescope-fzf-native.nvim
+# 若 treesitter 缺 CLI：先装 tree-sitter-cli，再 :TSUpdate
+```
+
+### 同步配置时注意（`lazy-lock.json`）
+
+在另一台机器上 `git pull` 若提示本地改动了 `lazy-lock.json` 会被覆盖，一般直接丢弃本地 lock 再拉即可：
+
+```bash
+cd ~/.config/nvim   # Windows: %LOCALAPPDATA%\nvim
+git restore lazy-lock.json
+git pull
+```
+
+### 按语言额外需要的工具链
+
+只写对应语言时才装；mason 只给 LSP 本体，工具链要另装：
+
+| 语言 | 工具链 | Windows 安装 |
+|------|--------|--------------|
 | Rust | rustup（rustc + cargo + rust-src） | `scoop install rustup` → `rustup default stable` → `rustup component add rust-src` |
 | C# | .NET SDK + roslyn 服务器 | 见下方「C# 特别说明」 |
 | C/C++、前端、Python 等 | 无（clangd/pyright 等开箱即用） | — |
@@ -123,6 +185,7 @@ lua/
 | `<leader>hs` / `<leader>hp` | 暂存 / 预览 Git hunk |
 | `[b` / `]b` / `<leader>bd` | 上/下一个 / 关闭 缓冲区 |
 | `<leader>wr` / `<leader>ws` | 会话搜索 / 保存 |
+| `<leader>W` | 用 sudo 保存当前文件（suda.nvim） |
 | `gcc` / `gc`(选区) | 注释（nvim 内置） |
 | `jj` | 插入模式退出到 Normal |
 | `gp` / `gP` | 粘贴 0 号寄存器（不被删除覆盖） |

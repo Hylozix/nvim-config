@@ -32,3 +32,6 @@ keymap.set("n", "gP", '"0P', opts)
 -- 可视模式：选中内容后按 gp，用 0 寄存器内容直接替换选中部分
 keymap.set("v", "gp", '"0gp', opts)
 keymap.set("v", "gP", '"0P', opts)
+
+-- 无写权限时用 sudo 保存（依赖 suda.nvim；也可用 :SudaWrite）
+-- 不要用 :w !sudo tee % —— nvim 的 ! 通常没有 TTY，sudo 无法交互输入密码
