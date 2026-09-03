@@ -68,7 +68,9 @@ vim.g.neovide_refresh_rate_idle = 5 -- 失焦/空闲时降到 5 帧，省电省 
 -------------中文输入法（重要）-------------
 -- 只在插入模式和搜索时启用 IME；回到普通模式自动切回英文输入，
 -- 这样 j/k 移动、各种快捷键不会被中文输入法拦截，不用手动切换
-vim.g.neovide_input_ime = true
+-- 初始值必须是 false：启动时停在 Normal 模式，若开着 IME，
+-- 开窗后的第一串按键会被输入法吃掉
+vim.g.neovide_input_ime = false
 local ime_group = vim.api.nvim_create_augroup("neovide_ime", { clear = true })
 vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
     group = ime_group,

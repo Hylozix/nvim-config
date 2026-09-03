@@ -168,7 +168,7 @@ lua/
 
 | 键 | 功能 |
 |----|------|
-| `<leader>e` / `<leader>ef` | 开关文件树 / 定位当前文件 |
+| `<leader>e` / `<leader>E` | 开关文件树 / 定位当前文件 |
 | `<leader>ff` / `<leader>fg` | 查找文件 / 全文搜索 |
 | `<leader>fb` / `<leader>fr` | 缓冲区 / 最近文件 |
 | `<leader>tt` | Telescope 挑选主题 |
@@ -176,10 +176,11 @@ lua/
 | `s` / `S` | Flash 跳转 / Flash 语法块 |
 | `ys` / `ds` / `cs` | surround 加 / 删 / 改包围 |
 | 选区 + `S` + 字符 | surround 给选区加括号/引号 |
-| `gd` / `gr` / `gi` | 跳转定义 / 引用 / 实现 |
-| `<leader>k` | 悬浮文档 |
-| `<leader>rn` / `<leader>ca` | 重命名 / 代码操作 |
-| `<leader>ci` | 开关 Inlay Hints |
+| `gd` / `grr` / `gri` | 跳转定义 / 引用 / 实现 |
+| `K` / `<leader>k` | 悬浮文档 |
+| `<leader>rn` / `grn` / `<leader>ca` / `gra` | 重命名 / 代码操作 |
+| `<leader>ci` / `<leader>cF` | 开关 Inlay Hints / 手动格式化 |
+| `<leader>mp` | 开关 Markdown 浏览器预览 |
 | `<leader>d` / `[d` / `]d` | 查看诊断 / 上一条 / 下一条 |
 | `[c` / `]c` | 上/下一处 Git 改动 |
 | `<leader>hs` / `<leader>hp` | 暂存 / 预览 Git hunk |
@@ -195,5 +196,10 @@ Neovide 专属：`Ctrl+=` / `Ctrl+-` / `Ctrl+0` 缩放，`F11` 全屏。
 
 `lazy-lock.json` 锁定了每个插件的精确 commit。想升级用 `:Lazy update`（会更新 lock 文件）。
 
-格式化器（stylua/prettier/black/csharpier 等）进 `:Mason` 面板或 `dotnet tool` 按需安装，
-装好后到 `lua/plugins/conform.lua` 里取消对应行的注释。
+格式化器（stylua/prettier/black/csharpier 等）已在 `lua/plugins/conform.lua` 里按语言配好，
+进 `:Mason` 面板或用 `dotnet tool` 装上对应二进制即可生效；没装的语言会自动回退到 LSP 的格式化。
+
+不想让保存时自动格式化（比如在改别人的代码库，避免整文件大 diff）：
+
+- `:FormatDisable` 全局关闭，`:FormatDisable!` 只关当前文件，`:FormatEnable` 恢复
+- `<leader>cF` 随时手动格式化一次

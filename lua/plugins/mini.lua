@@ -25,11 +25,20 @@ return {
       silent = true,
       desc = "Surround 选区",
     })
+    -- vim-surround 的 yss = 给整行加包围
+    vim.keymap.set("n", "yss", "ys_", { remap = true, silent = true, desc = "Surround 整行" })
 
     -- 只高亮「当前所在」缩进层级（不是每一级都画线；比 indent-blankline 更轻）
     require("mini.indentscope").setup({
       symbol = "│",
       options = { try_as_border = true },
+    })
+    -- 文件树 / 插件 UI / 终端里画缩进线只会显得乱
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = { "help", "NvimTree", "lazy", "mason", "TelescopePrompt", "qf" },
+      callback = function()
+        vim.b.miniindentscope_disable = true
+      end,
     })
   end,
 }

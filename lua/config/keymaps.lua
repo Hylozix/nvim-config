@@ -1,7 +1,4 @@
---设置Leader键为空格
-vim.g.mapleader = " "      --全局设置
-vim.g.maplocalleader = " " --局部设置
-
+-- Leader 已在 init.lua 最开头设置（必须早于 lazy.nvim）
 
 local keymap = vim.keymap
 

@@ -11,6 +11,9 @@ return {
       { "<leader>c", group = "代码 (code)" },
       { "<leader>b", group = "缓冲区 (buffer)" },
       { "<leader>t", group = "主题 (theme)" },
+      { "<leader>w", group = "会话 (session)" },
+      { "<leader>r", group = "重构 (rename)" },
+      { "<leader>m", group = "Markdown" },
     },
   },
 }

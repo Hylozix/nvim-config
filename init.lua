@@ -1,3 +1,7 @@
+-- Leader 必须在加载 lazy / 任何插件映射之前设好，否则 <leader>xxx 会绑到默认反斜杠上
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
 --加载编辑器基础设置
 require("config.options")
 --加载按键映射

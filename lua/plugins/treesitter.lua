@@ -26,15 +26,24 @@ return {
     ts.install({
       "c",
       "cpp",
+      "lua",
+      "vim",
+      "vimdoc",
+      "markdown",
+      "markdown_inline",
       "javascript",
       "typescript",
       "html",
       "css",
       "vue",
       "json",
+      "yaml",
+      "toml",
+      "sql", -- conform 配了 sql_formatter、LSP 配了 sqls，解析器别落下
       "bash",
       "python",
-      "c_sharp"
+      "c_sharp",
+      "rust",
     })
 
     -- 打开文件时：有对应解析器就启用语法树高亮和缩进（pcall 保证没有解析器时静默跳过）
