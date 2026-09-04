@@ -6,7 +6,6 @@ function M.setup()
     "kanagawa-wave",
     "kanagawa-dragon",
     "kanagawa-lotus",
-    "kanagawa",
     "tokyonight-storm",
     "tokyonight-night",
     "tokyonight-day",

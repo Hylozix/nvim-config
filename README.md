@@ -142,7 +142,7 @@ lua/
     ├── roslyn.lua            -- C# roslyn 语言服务器
     ├── completion.lua        -- blink.cmp 自动补全
     ├── telescope.lua         -- 模糊查找（含 fzf-native 加速）
-    ├── lualine.lua           -- 状态栏（含 navic 面包屑）
+    ├── lualine.lua           -- 状态栏 + winbar 面包屑
     ├── navic.lua             -- 代码结构面包屑
     ├── barbar.lua            -- 顶部标签栏
     ├── mini.lua              -- mini.surround / mini.indentscope

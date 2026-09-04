@@ -1,5 +1,4 @@
--- 顶部标签：按 ilovevim 的 barbar 配置
--- （他已弃用 mini.tabline，注释写着「改用 barbar.nvim」）
+-- 顶部标签栏：文件类型图标 + 扩展名 + 左侧青色竖条标当前项
 return {
   "romgrk/barbar.nvim",
   event = { "BufReadPre", "BufNewFile" },
@@ -17,15 +16,18 @@ return {
   },
   opts = {
     animation = false,
-    hide = { extensions = true }, -- 只显示 init，不显示 init.lua
+    hide = { extensions = false },
     icons = {
-      button = false, -- 不要关闭按钮
-      filetype = { custom_colors = true, enabled = false }, -- 不要文件类型图标
-      -- 分隔符默认为 ▎（细竖条），右边界空格，就是参考图那种分割感
-      separator = { right = " " },
-      inactive = { separator = { right = " " } },
+      button = false,
+      filetype = { enabled = true },
+      separator = { left = "▎", right = " " },
+      inactive = { separator = { left = "▎", right = " " } },
     },
-    minimum_padding = 0,
-    maximum_length = 14,
+    -- 打开 nvim-tree 时标签栏右移，避免和文件树叠在一起
+    sidebar_filetypes = {
+      NvimTree = { text = "Files", align = "center" },
+    },
+    minimum_padding = 1,
+    maximum_length = 22,
   },
 }
