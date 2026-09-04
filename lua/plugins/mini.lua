@@ -1,6 +1,6 @@
 -- mini.nvim：按需启用子模块（比各自独立插件更轻）
 -- surround：括号/引号；indentscope：当前缩进块参考线
--- 注：标签栏跟 ilovevim 一样用 barbar，不用 mini.tabline
+-- 注：标签栏由 NvChad Tabufline 提供，不启用 mini.tabline
 return {
   "nvim-mini/mini.nvim",
   version = false,

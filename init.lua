@@ -2,6 +2,10 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- NvChad Base46 的编译缓存。必须在 lazy.nvim 加载插件前设置，
+-- 这样 UI、主题和各插件的高亮整合可以复用同一份缓存。
+vim.g.base46_cache = vim.fn.stdpath("data") .. "/base46_cache/"
+
 --加载编辑器基础设置
 require("config.options")
 --加载按键映射

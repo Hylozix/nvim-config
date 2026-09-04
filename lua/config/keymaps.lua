@@ -29,3 +29,11 @@ keymap.set("n", "gP", '"0P', opts)
 -- 可视模式：选中内容后按 gp，用 0 寄存器内容直接替换选中部分
 keymap.set("v", "gp", '"0gp', opts)
 keymap.set("v", "gP", '"0P', opts)
+
+-- NvChad Tabufline：沿用原 Barbar 的缓冲区快捷键。
+keymap.set("n", "[b", function() require("nvchad.tabufline").prev() end,
+  { silent = true, desc = "上一个缓冲区" })
+keymap.set("n", "]b", function() require("nvchad.tabufline").next() end,
+  { silent = true, desc = "下一个缓冲区" })
+keymap.set("n", "<leader>bd", function() require("nvchad.tabufline").close_buffer() end,
+  { silent = true, desc = "关闭当前缓冲区" })

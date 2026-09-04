@@ -1,6 +1,6 @@
 # Neovim 配置
 
-个人 Neovim 配置，基于 [lazy.nvim](https://github.com/folke/lazy.nvim) 管理插件。默认使用 **Neovide** + 中文 IME。
+个人 Neovim 配置，基于 [lazy.nvim](https://github.com/folke/lazy.nvim) 管理插件，UI 使用 [NvChad](https://github.com/NvChad/NvChad) 的 Base46、状态栏和 Tabufline。默认使用 **Neovide** + 中文 IME。
 
 ## 换电脑一键使用
 
@@ -127,24 +127,26 @@ C# 格式化推荐全局安装 **csharpier**：`dotnet tool install -g csharpier
 ```
 init.lua                      -- 入口：加载 config/，初始化 lazy
 lua/
+├── chadrc.lua                -- NvChad UI、主题和欢迎页选项
 ├── config/
 │   ├── options.lua           -- 编辑器基础选项
 │   ├── keymaps.lua           -- 全局按键映射
 │   ├── autocmds.lua          -- 自动命令
 │   ├── neovide.lua           -- Neovide GUI（字体、IME、标题栏、缩放）
-│   └── colorscheme.lua       -- 主题应用与切换（不是 lazy 插件）
+│   └── colorscheme.lua       -- NvChad 主题应用与切换（不是 lazy 插件）
 └── plugins/                  -- lazy 自动扫描，每个文件一个/一组插件
-    ├── kanagawa.lua          -- 安装 kanagawa（并触发 colorscheme 配置）
-    ├── tokyonight.lua        -- 安装 tokyonight（仅下载，由 kanagawa 依赖加载）
+    ├── nvchad-ui.lua         -- NvChad UI、Base46、Tabufline、Nvdash
+    ├── kanagawa.lua          -- 旧主题入口（已停用，保留文件路径）
+    ├── tokyonight.lua        -- 旧主题入口（已停用，保留文件路径）
     ├── tree.lua              -- nvim-tree 文件树
     ├── treesitter.lua        -- 语法高亮
     ├── lsp.lua               -- LSP（mason + lspconfig + inlay hints）
     ├── roslyn.lua            -- C# roslyn 语言服务器
     ├── completion.lua        -- blink.cmp 自动补全
     ├── telescope.lua         -- 模糊查找（含 fzf-native 加速）
-    ├── lualine.lua           -- 状态栏 + winbar 面包屑
+    ├── lualine.lua           -- 旧状态栏入口（已停用）
     ├── navic.lua             -- 代码结构面包屑
-    ├── barbar.lua            -- 顶部标签栏
+    ├── barbar.lua            -- 旧标签栏入口（已停用）
     ├── mini.lua              -- mini.surround / mini.indentscope
     ├── flash.lua             -- 屏内闪跳
     ├── fidget.lua            -- LSP 进度提示
@@ -160,9 +162,9 @@ lua/
 
 ### 主题说明
 
-- **安装**：`plugins/kanagawa.lua`、`plugins/tokyonight.lua`（lazy 从 GitHub 下载）
-- **应用**：`config/colorscheme.lua`（默认 `kanagawa-wave`，不会去 git clone）
-- 换默认主题：改 `config/colorscheme.lua` 里 `apply_theme("kanagawa-wave")`
+- **应用**：NvChad Base46（默认 `kanagawa`），主题选择器为 `<leader>tt`
+- 可用 `Ctrl+↑` / `Ctrl+↓` 循环主题；想改启动主题，编辑 `lua/chadrc.lua` 的 `base46.theme`
+- 首次启动会额外安装 `nvchad/base46`、`nvchad/ui`、`nvzone/volt` UI 插件
 
 ## 常用快捷键（leader = 空格）
 
@@ -171,7 +173,7 @@ lua/
 | `<leader>e` / `<leader>E` | 开关文件树 / 定位当前文件 |
 | `<leader>ff` / `<leader>fg` | 查找文件 / 全文搜索 |
 | `<leader>fb` / `<leader>fr` | 缓冲区 / 最近文件 |
-| `<leader>tt` | Telescope 挑选主题 |
+| `<leader>tt` | NvChad 主题选择器 |
 | `Ctrl+↑` / `Ctrl+↓` | 上一个 / 下一个主题 |
 | `s` / `S` | Flash 跳转 / Flash 语法块 |
 | `ys` / `ds` / `cs` | surround 加 / 删 / 改包围 |
@@ -194,7 +196,7 @@ Neovide 专属：`Ctrl+=` / `Ctrl+-` / `Ctrl+0` 缩放，`F11` 全屏。
 
 ## 复现性
 
-`lazy-lock.json` 锁定了每个插件的精确 commit。想升级用 `:Lazy update`（会更新 lock 文件）。
+`lazy-lock.json` 已锁定每个插件的精确 commit；想升级用 `:Lazy update`。
 
 格式化器（stylua/prettier/black/csharpier 等）已在 `lua/plugins/conform.lua` 里按语言配好，
 进 `:Mason` 面板或用 `dotnet tool` 装上对应二进制即可生效；没装的语言会自动回退到 LSP 的格式化。

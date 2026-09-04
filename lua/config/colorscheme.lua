@@ -1,23 +1,32 @@
--- 主题应用与切换（纯配置，不是 lazy 插件，不会去 git clone）
+-- NvChad Base46 主题切换。快捷键保持原配置不变。
 local M = {}
 
 function M.setup()
   local themes = {
-    "kanagawa-wave",
-    "kanagawa-dragon",
-    "kanagawa-lotus",
-    "tokyonight-storm",
-    "tokyonight-night",
-    "tokyonight-day",
-    "tokyonight-moon",
+    "onedark",
+    "one_light",
+    "tokyonight",
+    "catppuccin",
+    "gruvbox",
+    "nord",
+    "rosepine",
+    "everforest",
+    "kanagawa",
+    "vscode_dark",
   }
 
-  local function apply_theme(name)
-    return pcall(vim.cmd.colorscheme, name)
+  local function apply_theme(name, notify)
+    local ok = pcall(function()
+      require("nvchad.themes.utils").reload_theme(name)
+    end)
+    if ok and notify then
+      vim.notify(name, vim.log.levels.INFO, { title = "NvChad 主题" })
+    end
+    return ok
   end
 
   local function cycle_theme(delta)
-    local current = vim.g.colors_name
+    local current = require("nvconfig").base46.theme
     local start = 1
     for i, name in ipairs(themes) do
       if name == current then
@@ -27,18 +36,22 @@ function M.setup()
     end
     for n = 1, #themes do
       local idx = ((start + delta * n - 1) % #themes) + 1
-      if apply_theme(themes[idx]) then
-        vim.notify(themes[idx], vim.log.levels.INFO, { title = "主题" })
+      if apply_theme(themes[idx], true) then
         return
       end
     end
   end
 
-  apply_theme("kanagawa-wave")
-
   vim.keymap.set("n", "<C-Up>", function() cycle_theme(-1) end, { desc = "上一个主题" })
   vim.keymap.set("n", "<C-Down>", function() cycle_theme(1) end, { desc = "下一个主题" })
-  vim.keymap.set("n", "<leader>tt", "<cmd>Telescope colorscheme<cr>", { desc = "挑选主题" })
+  vim.keymap.set("n", "<leader>tt", function()
+    local ok, picker = pcall(require, "nvchad.themes")
+    if ok then
+      picker.open()
+    else
+      vim.notify("NvChad 主题选择器尚未加载", vim.log.levels.WARN)
+    end
+  end, { desc = "挑选 NvChad 主题" })
 end
 
 return M
