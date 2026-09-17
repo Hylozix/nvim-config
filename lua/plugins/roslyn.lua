@@ -8,6 +8,23 @@
 --       （scoop 装 dotnet-sdk 会自动设好 DOTNET_ROOT）
 return {
   "seblyng/roslyn.nvim",
-  ft = "cs", -- 只在打开 C# 文件时加载
+  ft = { "cs", "razor" }, -- C# 和 Razor/CSHTML 都需要 Roslyn
   opts = {},
+  config = function(_, opts)
+    require("roslyn").setup(opts)
+    vim.lsp.config("roslyn", {
+      handlers = {
+        ["razor/updateHtml"] = function(_, params)
+          local document = require("roslyn.razor.documentManager"):updateDocumentText(
+            params.textDocument.uri, params.checksum, params.text
+          )
+          -- 虚拟缓冲区可能跳过文件类型检测，导致 HTML 补全转发每次同步等待 5 秒。
+          if vim.bo[document.buf].filetype ~= "html" then
+            vim.bo[document.buf].filetype = "html"
+          end
+          return false
+        end,
+      },
+    })
+  end,
 }

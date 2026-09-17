@@ -35,6 +35,9 @@ return {
         { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "已打开的缓冲区" },
         { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "帮助文档" },
         { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "最近打开的文件" },
+        { "<leader>fs", "<cmd>Telescope lsp_document_symbols<cr>", desc = "当前文件的类和函数" },
+        { "<leader>fS", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", desc = "项目符号" },
+        { "<leader>fd", "<cmd>Telescope diagnostics<cr>", desc = "诊断列表" },
     },
     config = function()
         local telescope = require("telescope")

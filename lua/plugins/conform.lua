@@ -8,7 +8,15 @@ return {
   keys = {
     {
       "<leader>cF",
-      function() require("conform").format({ async = true, lsp_format = "fallback" }) end,
+      function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        require("conform").format({
+          async = true,
+          -- Roslyn's Razor formatter can return ranges from a stale generated
+          -- document, which makes the server reject the edit as out of bounds.
+          lsp_format = vim.bo[bufnr].filetype == "razor" and "never" or "fallback",
+        })
+      end,
       mode = { "n", "v" },
       desc = "手动格式化",
     },
@@ -29,7 +37,13 @@ return {
     -- csharpier / black 在大文件上 500ms 经常超时；没装对应 formatter 时不要反复弹窗
     -- 写成函数是为了能临时关掉：改别人的代码库时，自动格式化会把整个文件搅成大 diff
     format_on_save = function(bufnr)
-      if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+      if
+        vim.g.disable_autoformat
+        or vim.b[bufnr].disable_autoformat
+        or vim.b[bufnr].large_file
+        or vim.api.nvim_buf_get_offset(bufnr, vim.api.nvim_buf_line_count(bufnr)) > 1024 * 1024
+        or vim.bo[bufnr].filetype == "razor"
+      then
         return
       end
       return { timeout_ms = 1500, lsp_format = "fallback" }

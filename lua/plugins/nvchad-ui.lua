@@ -21,11 +21,32 @@ return {
     },
     config = function()
       local cache = vim.g.base46_cache
-      local fs_stat = (vim.uv or vim.loop).fs_stat
+      local signature_file = cache .. "config_signature"
+      local chadrc_path = vim.fn.stdpath("config") .. "/lua/chadrc.lua"
+      local chadrc = vim.fn.filereadable(chadrc_path) == 1 and vim.fn.readfile(chadrc_path) or {}
+      local signature = vim.fn.sha256(table.concat(chadrc, "\n"))
+      local saved_signature = vim.fn.filereadable(signature_file) == 1
+          and vim.fn.readfile(signature_file)[1]
+        or nil
 
-      -- 首次安装时 build 可能尚未生成缓存，启动时补生成一次。
-      if not fs_stat(cache .. "defaults") then
+      local function load_cached_highlights()
+        -- 动态读取缓存目录，兼容 Base46 后续新增的 integration 文件。
+        for _, name in ipairs(vim.fn.readdir(cache)) do
+          if name ~= "config_signature" then
+            local ok = pcall(dofile, cache .. name)
+            if not ok then
+              return false
+            end
+          end
+        end
+        return true
+      end
+
+      local cache_ready = vim.fn.filereadable(cache .. "defaults") == 1
+      if not cache_ready or saved_signature ~= signature or not load_cached_highlights() then
         require("base46").load_all_highlights()
+        vim.fn.mkdir(cache, "p")
+        vim.fn.writefile({ signature }, signature_file)
       end
 
       require("nvchad")

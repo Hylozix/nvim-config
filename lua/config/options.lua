@@ -48,7 +48,7 @@ opt.foldtext = ""                                -- 折叠行保留语法高亮�
 
 -- 诊断外观：不依赖 LSP 插件何时加载
 vim.diagnostic.config({
-  virtual_text = { spacing = 2, prefix = "●" },
+  virtual_text = { spacing = 2, prefix = "●", current_line = true },
   float = { source = true },
   severity_sort = true,
   signs = {

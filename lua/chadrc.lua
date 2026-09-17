@@ -4,8 +4,8 @@ local M = {}
 
 M.base46 = {
   -- 保留原配置偏好的 Kanagawa 配色，UI 布局仍由 NvChad 提供。
-  theme = "kanagawa",
-  theme_toggle = { "kanagawa", "kanagawa-dragon" },
+  theme = "palenight",
+  theme_toggle = { "palenight", "kanagawa-dragon" },
   transparency = false,
 }
 

@@ -1,11 +1,12 @@
 -- mini.nvim：按需启用子模块（比各自独立插件更轻）
--- surround：括号/引号；indentscope：当前缩进块参考线
+-- ai：参数等文本对象；surround：括号/引号；indentscope：当前缩进块参考线
 -- 注：标签栏由 NvChad Tabufline 提供，不启用 mini.tabline
 return {
   "nvim-mini/mini.nvim",
   version = false,
   event = { "BufReadPre", "BufNewFile" },
   config = function()
+    require("mini.ai").setup()
     -- 键位对齐 vim-surround 肌肉记忆：ys 加、ds 删、cs 改
     require("mini.surround").setup({
       mappings = {
@@ -35,7 +36,7 @@ return {
     })
     -- 文件树 / 插件 UI / 终端里画缩进线只会显得乱
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = { "help", "NvimTree", "lazy", "mason", "TelescopePrompt", "qf" },
+      pattern = { "help", "NvimTree", "lazy", "mason", "TelescopePrompt", "qf", "grug-far", "OverseerList", "OverseerOutput" },
       callback = function()
         vim.b.miniindentscope_disable = true
       end,

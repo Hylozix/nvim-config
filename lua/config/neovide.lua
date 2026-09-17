@@ -12,7 +12,7 @@ vim.o.guifont = "Maple Mono NF CN,JetBrainsMono NF:h12"
 vim.opt.linespace = 2 -- 行间距（像素），中文夹杂时稍微松一点更舒服
 
 -------------缩放（Ctrl+= 放大 / Ctrl+- 缩小 / Ctrl+0 复原）-------------
-vim.g.neovide_scale_factor = 1.0
+vim.g.neovide_scale_factor = 0.9
 local function zoom(delta)
     vim.g.neovide_scale_factor = math.max(0.5, math.min(2.0, vim.g.neovide_scale_factor + delta))
 end
@@ -38,12 +38,12 @@ vim.g.neovide_theme = "dark"
 vim.g.neovide_title_text_color = "#c0caf5"
 -- 等 colorscheme 加载后再取 Normal 背景，避免此时主题还没就绪
 vim.api.nvim_create_autocmd("ColorScheme", {
-  callback = function()
-    local hl = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
-    if hl.bg then
-      vim.g.neovide_title_background_color = string.format("#%06x", hl.bg)
-    end
-  end,
+    callback = function()
+        local hl = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
+        if hl.bg then
+            vim.g.neovide_title_background_color = string.format("#%06x", hl.bg)
+        end
+    end,
 })
 
 -- F11 切换全屏

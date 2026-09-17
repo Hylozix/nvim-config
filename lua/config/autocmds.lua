@@ -1,6 +1,38 @@
 -- 把创建自动命令的函数赋值给局部变量，简化写法
 local autocmd = vim.api.nvim_create_autocmd
 
+-- 超过 1 MiB 的文件和压缩 JS/CSS 关闭高开销的显示功能。
+autocmd({ "BufReadPre", "BufNewFile" }, {
+  callback = function(ev)
+    local stat = vim.uv.fs_stat(ev.file)
+    local large = (stat ~= nil and stat.size > 1024 * 1024)
+      or ev.file:match("%.min%.js$") ~= nil
+      or ev.file:match("%.min%.css$") ~= nil
+    vim.b[ev.buf].large_file = large
+    if large then
+      vim.b[ev.buf].miniindentscope_disable = true
+    end
+  end,
+})
+
+autocmd("BufWinEnter", {
+  callback = function(ev)
+    if vim.b[ev.buf].large_file then
+      vim.opt_local.foldmethod = "manual"
+      vim.bo[ev.buf].syntax = ""
+    end
+  end,
+})
+
+-- Razor 页面同时包含 HTML 和 C#，统一交给 roslyn.nvim 的 razor 客户端处理。
+-- 显式覆盖 .cshtml，避免它被默认识别成普通 html 而跳过 Roslyn。
+vim.filetype.add({
+  extension = {
+    razor = "razor",
+    cshtml = "razor",
+  },
+})
+
 -- 自动命令：复制（yank）后短暂高亮被复制的文本，方便确认复制范围
 autocmd("TextYankPost", { -- 触发事件：任何 yank/删除进寄存器之后
   pattern = "*",

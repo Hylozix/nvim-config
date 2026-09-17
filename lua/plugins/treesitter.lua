@@ -9,8 +9,8 @@ return {
   branch = "main",
   -- 插件更新时自动更新已安装的解析器
   build = ":TSUpdate",
-  -- 懒加载：只有打开文件时才加载插件，不影响启动速度
-  event = { "BufReadPre", "BufNewFile" },
+  -- main 分支在启动时加载，文件高亮由 FileType 事件开启。
+  lazy = false,
   config = function()
     local ts = require("nvim-treesitter")
 
@@ -43,12 +43,14 @@ return {
       "bash",
       "python",
       "c_sharp",
+      "razor",
       "rust",
     })
 
     -- 打开文件时：有对应解析器就启用语法树高亮和缩进（pcall 保证没有解析器时静默跳过）
     vim.api.nvim_create_autocmd("FileType", {
       callback = function(ev)
+        if vim.b[ev.buf].large_file then return end
         -- 文件类型 → 解析器语言名（比如 filetype=sh 对应解析器 bash）
         local lang = vim.treesitter.language.get_lang(ev.match)
         if not lang then return end

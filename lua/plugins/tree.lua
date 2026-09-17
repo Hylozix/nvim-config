@@ -20,8 +20,11 @@ return {
             ["WinLib"] = true,
         }
         require("nvim-tree").setup({
-            view = { width = 32 },
+            view = {
+                width = { min = 32, max = "40%", padding = 2 },
+            },
             renderer = {
+                full_name = true,
                 group_empty = true,
                 indent_markers = { enable = true },
                 highlight_git = true,
@@ -30,10 +33,15 @@ return {
             -- 不监视这些目录的文件变动：都是工具自动高频写入的缓存/产物目录
             -- 用函数按目录名判断，避免 Windows 反斜杠让 vim 正则失效
             filesystem_watchers = {
+                -- Windows 上 Git switch/checkout 会瞬间产生大量事件。
+                -- 关闭阈值保护，交给 50ms debounce 合并后统一刷新，避免 watcher 被自动停用。
+                max_events = 0,
+                debounce_delay = 100,
                 ignore_dirs = function(path)
                     return skip_watch[vim.fn.fnamemodify(path, ":t")] == true
                 end,
             },
+            reload_on_bufenter = true,
         })
     end,
 }

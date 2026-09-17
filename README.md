@@ -22,6 +22,7 @@ git clone <你的仓库地址> ~/.config/nvim
 
 - **Shell**：Windows 用 `pwsh`，Linux/macOS 用 `bash`（见 `lua/config/options.lua`）
 - **telescope-fzf-native**：Windows 用 MinGW cmake，Linux 用 `make`
+- **nvim-tree 文件监听**：Windows 上 Git 切换分支产生的大量事件会合并刷新，不会自动停掉 watcher
 - **编辑系统文件（无额外插件）**：mise 的 nvim 不在 root PATH，建议：
   - `sudo env "PATH=$PATH" nvim /etc/...`（推荐）
   - 或先在家目录编辑，再 `sudo cp` 到目标路径
@@ -136,17 +137,12 @@ lua/
 │   └── colorscheme.lua       -- NvChad 主题应用与切换（不是 lazy 插件）
 └── plugins/                  -- lazy 自动扫描，每个文件一个/一组插件
     ├── nvchad-ui.lua         -- NvChad UI、Base46、Tabufline、Nvdash
-    ├── kanagawa.lua          -- 旧主题入口（已停用，保留文件路径）
-    ├── tokyonight.lua        -- 旧主题入口（已停用，保留文件路径）
     ├── tree.lua              -- nvim-tree 文件树
     ├── treesitter.lua        -- 语法高亮
     ├── lsp.lua               -- LSP（mason + lspconfig + inlay hints）
     ├── roslyn.lua            -- C# roslyn 语言服务器
     ├── completion.lua        -- blink.cmp 自动补全
     ├── telescope.lua         -- 模糊查找（含 fzf-native 加速）
-    ├── lualine.lua           -- 旧状态栏入口（已停用）
-    ├── navic.lua             -- 代码结构面包屑
-    ├── barbar.lua            -- 旧标签栏入口（已停用）
     ├── mini.lua              -- mini.surround / mini.indentscope
     ├── flash.lua             -- 屏内闪跳
     ├── fidget.lua            -- LSP 进度提示
@@ -173,6 +169,12 @@ lua/
 | `<leader>e` / `<leader>E` | 开关文件树 / 定位当前文件 |
 | `<leader>ff` / `<leader>fg` | 查找文件 / 全文搜索 |
 | `<leader>fb` / `<leader>fr` | 缓冲区 / 最近文件 |
+| `<leader>fs` / `<leader>fS` / `<leader>fd` | 当前文件符号 / 项目符号 / 诊断列表 |
+| `<leader>rr` | 跨文件搜索替换（选区中使用会填入选中文字） |
+| `<leader>q` | 开关 quickfix 结果列表；列表中 `>` / `<` 展开 / 收起上下文 |
+| `<leader>cr` / `<leader>ct` | 运行项目任务 / 开关任务列表 |
+| `cia` / `daa` | 修改参数 / 删除参数（mini.ai） |
+| `Ctrl+w` 后按大写 `X` | 选择窗口交换，保留布局和尺寸 |
 | `<leader>tt` | NvChad 主题选择器 |
 | `Ctrl+↑` / `Ctrl+↓` | 上一个 / 下一个主题 |
 | `s` / `S` | Flash 跳转 / Flash 语法块 |
@@ -205,3 +207,14 @@ Neovide 专属：`Ctrl+=` / `Ctrl+-` / `Ctrl+0` 缩放，`F11` 全屏。
 
 - `:FormatDisable` 全局关闭，`:FormatDisable!` 只关当前文件，`:FormatEnable` 恢复
 - `<leader>cF` 随时手动格式化一次
+
+## 编辑与性能
+
+- Treesitter 在启动时加载；文件高亮和缩进在识别文件类型后开启。
+- 超过 1 MiB 的文件，以及 `.min.js` / `.min.css`，跳过 Treesitter 高亮、缩进块指示、自动折叠和保存时格式化。编辑中增长到超过 1 MiB 的文件也跳过保存时格式化；仍可用 `<leader>cF` 手动格式化。
+- 诊断文字只显示在当前行，其他行保留诊断图标；`<leader>fd` 查看已收集的诊断。
+- Neovide 普通模式和插入模式均启用光标动画，并保留滚动动画。
+- grug-far、quicker、overseer 按需加载。grug-far 预览替换结果后，在面板内按 `<localleader>r` 执行替换（localleader = 空格）。变量和方法改名使用 LSP 重命名。
+- Telescope 结果可用 `Ctrl+q` 送到 quickfix；quicker 支持编辑结果列表并用 `:w` 将改动应用到源文件。
+- Overseer 可读取项目的 npm 脚本、`.vscode/tasks.json` 等任务；C# 编译命令需按项目使用的工具链配置。
+- 通用代码片段沿用 friendly-snippets；项目专用片段按实际项目写法添加。
