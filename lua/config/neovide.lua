@@ -33,7 +33,7 @@ vim.g.neovide_padding_right = 6
 
 -- 标题栏（那条白框）：不是插件能画的，是 Windows 窗口装饰
 -- 没法靠 Neovim 插件去掉；下面把它染成和编辑器背景同色，视觉上就不突兀了
--- 真要彻底去掉：全屏(F11)，或启动参数 neovide --frame none（无边框后拖拽/缩放会变麻烦）
+-- 真要彻底去掉：全屏(Alt+Enter)，或启动参数 neovide --frame none（无边框后拖拽/缩放会变麻烦）
 vim.g.neovide_theme = "dark"
 vim.g.neovide_title_text_color = "#c0caf5"
 -- 等 colorscheme 加载后再取 Normal 背景，避免此时主题还没就绪
@@ -46,8 +46,8 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     end,
 })
 
--- F11 切换全屏
-vim.keymap.set("n", "<F11>", function()
+-- Alt+Enter 切换全屏
+vim.keymap.set("n", "<A-CR>", function()
     vim.g.neovide_fullscreen = not vim.g.neovide_fullscreen
 end, { desc = "Neovide 全屏切换" })
 

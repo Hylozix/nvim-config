@@ -2,6 +2,12 @@
 -- 依赖命令行工具 ripgrep(rg) 做全文搜索：scoop install ripgrep
 -- fzf-native：C 实现的排序/匹配，输入过滤比默认 Lua sorter 跟手
 -- live-grep-args：在搜索框里直接写 rg 参数，例如 "foo" -g*.js / "foo" -tjs
+local grep_arguments = {
+    "rg", "--color=never", "--no-heading", "--with-filename",
+    "--line-number", "--column", "--smart-case",
+    "--max-columns=300", "--max-columns-preview",
+}
+
 return {
     "nvim-telescope/telescope.nvim",
     -- 用 master 活跃分支：旧的 0.1.x 分支停更了，其预览器还在调用
@@ -30,7 +36,17 @@ return {
             function()
                 require("telescope").extensions.live_grep_args.live_grep_args()
             end,
-            desc = "全文搜索（可带 rg 参数）",
+            desc = "搜索源码（可带 rg 参数）",
+        },
+        {
+            "<leader>fG",
+            function()
+                require("telescope").extensions.live_grep_args.live_grep_args({
+                    vimgrep_arguments = grep_arguments,
+                    prompt_title = "全文搜索（含生成文件）",
+                })
+            end,
+            desc = "全文搜索（含生成文件）",
         },
         { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "已打开的缓冲区" },
         { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "帮助文档" },
@@ -46,6 +62,13 @@ return {
 
         telescope.setup({
             defaults = {
+                -- 在 ripgrep 扫描时排除生成文件，搜索结果保留源码。
+                vimgrep_arguments = vim.list_extend(vim.deepcopy(grep_arguments), {
+                    "--glob", "!**/{bin,obj,node_modules,.vs}/**",
+                    "--glob", "!*.min.js",
+                    "--glob", "!*.min.css",
+                    "--glob", "!*.map",
+                }),
                 prompt_prefix = "  ",
                 selection_caret = "▌ ",
                 path_display = { "filename_first" },
@@ -56,6 +79,8 @@ return {
             extensions = {
                 live_grep_args = {
                     auto_quoting = true,
+                    debounce = 100,
+                    preview = { filesize_limit = 1, highlight_limit = 0.25 },
                     mappings = {
                         i = {
                             -- 把当前输入加引号，方便后面接 rg 参数

@@ -152,7 +152,6 @@ lua/
     ├── autopairs.lua         -- 自动配对括号
     ├── conform.lua           -- 保存时格式化
     ├── auto-session.lua      -- 会话保存/恢复
-    ├── markdown-preview.lua  -- Markdown 预览
     └── neovime.lua           -- IME 相关
 ```
 
@@ -167,7 +166,7 @@ lua/
 | 键 | 功能 |
 |----|------|
 | `<leader>e` / `<leader>E` | 开关文件树 / 定位当前文件 |
-| `<leader>ff` / `<leader>fg` | 查找文件 / 全文搜索 |
+| `<leader>ff` / `<leader>fg` / `<leader>fG` | 查找文件 / 搜索源码 / 搜索含生成文件 |
 | `<leader>fb` / `<leader>fr` | 缓冲区 / 最近文件 |
 | `<leader>fs` / `<leader>fS` / `<leader>fd` | 当前文件符号 / 项目符号 / 诊断列表 |
 | `<leader>rr` | 跨文件搜索替换（选区中使用会填入选中文字） |
@@ -184,7 +183,6 @@ lua/
 | `K` / `<leader>k` | 悬浮文档 |
 | `<leader>rn` / `grn` / `<leader>ca` / `gra` | 重命名 / 代码操作 |
 | `<leader>ci` / `<leader>cF` | 开关 Inlay Hints / 手动格式化 |
-| `<leader>mp` | 开关 Markdown 浏览器预览 |
 | `<leader>d` / `[d` / `]d` | 查看诊断 / 上一条 / 下一条 |
 | `[c` / `]c` | 上/下一处 Git 改动 |
 | `<leader>hs` / `<leader>hp` | 暂存 / 预览 Git hunk |
@@ -194,7 +192,7 @@ lua/
 | `jj` | 插入模式退出到 Normal |
 | `gp` / `gP` | 粘贴 0 号寄存器（不被删除覆盖） |
 
-Neovide 专属：`Ctrl+=` / `Ctrl+-` / `Ctrl+0` 缩放，`F11` 全屏。
+Neovide 专属：`Ctrl+=` / `Ctrl+-` / `Ctrl+0` 缩放，`Alt+Enter` 全屏。
 
 ## 复现性
 
@@ -218,3 +216,10 @@ Neovide 专属：`Ctrl+=` / `Ctrl+-` / `Ctrl+0` 缩放，`F11` 全屏。
 - Telescope 结果可用 `Ctrl+q` 送到 quickfix；quicker 支持编辑结果列表并用 `:w` 将改动应用到源文件。
 - Overseer 可读取项目的 npm 脚本、`.vscode/tasks.json` 等任务；C# 编译命令需按项目使用的工具链配置。
 - 通用代码片段沿用 friendly-snippets；项目专用片段按实际项目写法添加。
+
+### 全文搜索
+
+- `<leader>fg` 默认跳过 `bin`、`obj`、`node_modules`、`.vs` 目录，以及 `*.min.js`、`*.min.css`、`*.map`。
+- `<leader>fG` 不加上述过滤，仍遵循 ripgrep 原有的忽略规则。需要搜索被 `.gitignore` 等规则忽略的内容时，在搜索框输入 `"关键词" --no-ignore`。
+- 连续输入时按约 100 毫秒的间隔更新搜索；结果中的长行最多展示约 300 列，仍可回车跳到原始文件中的匹配位置。
+- 全文搜索预览超过 1 MB 的文件时显示大小提示，超过 0.25 MB 的文件不做语法高亮；文件内容仍参与搜索。
