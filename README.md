@@ -194,6 +194,13 @@ lua/
 
 Neovide 专属：`Ctrl+=` / `Ctrl+-` / `Ctrl+0` 缩放，`Alt+Enter` 全屏。
 
+## Markdown 编辑
+
+- 打开 `.md` 时启用软折行和按词折行；`j` / `k` 沿屏幕行移动，带次数时仍按原来的文件行移动。文件里的换行符不会被改写；
+- 普通模式下使用 `render-markdown.nvim` 显示标题、列表和表格；插入模式显示 Markdown 原文。`:RenderMarkdown toggle` 可临时切换。
+- 在空白行按 `<leader>mt` 插入两列表格；表格中用 `Alt+n` / `Alt+p` 移动单元格，普通模式下用 `Alt+j` / `Alt+k` 增加行、`Alt+l` / `Alt+h` 增加列。退出插入模式后自动对齐表格。
+- 两个插件只在 Markdown 文件中加载；超过 1 MiB 的文件跳过渲染和软折行。
+
 ## 复现性
 
 `lazy-lock.json` 已锁定每个插件的精确 commit；想升级用 `:Lazy update`。

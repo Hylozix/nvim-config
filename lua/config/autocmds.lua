@@ -1,6 +1,21 @@
 -- 把创建自动命令的函数赋值给局部变量，简化写法
 local autocmd = vim.api.nvim_create_autocmd
 
+autocmd("FileType", {
+  pattern = "markdown",
+  callback = function(ev)
+    if vim.b[ev.buf].large_file then return end
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+    vim.opt_local.breakindent = true
+    for _, key in ipairs({ "j", "k" }) do
+      vim.keymap.set({ "n", "x" }, key, function()
+        return vim.v.count == 0 and "g" .. key or key
+      end, { expr = true, buffer = ev.buf })
+    end
+  end,
+})
+
 -- 超过 1 MiB 的文件和压缩 JS/CSS 关闭高开销的显示功能。
 autocmd({ "BufReadPre", "BufNewFile" }, {
   callback = function(ev)
