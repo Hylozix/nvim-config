@@ -9,7 +9,10 @@
 return {
   "seblyng/roslyn.nvim",
   ft = { "cs", "razor" }, -- C# 和 Razor/CSHTML 都需要 Roslyn
-  opts = {},
+  opts = {
+    -- 让 Roslyn 自行监听项目文件变化，保存 .csproj 后更新项目引用。
+    filewatching = "roslyn",
+  },
   config = function(_, opts)
     require("roslyn").setup(opts)
     vim.lsp.config("roslyn", {

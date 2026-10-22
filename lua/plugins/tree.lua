@@ -30,11 +30,17 @@ return {
                 highlight_git = true,
             },
             update_focused_file = { enable = true },
+            -- 默认只等 400ms，累计 5 次超时会关闭本次会话的 Git 集成。
+            -- 给 Windows 上的仓库扫描留出余量，避免偶发变慢后标记一直失效。
+            git = {
+                enable = true,
+                timeout = 2000,
+            },
             -- 不监视这些目录的文件变动：都是工具自动高频写入的缓存/产物目录
             -- 用函数按目录名判断，避免 Windows 反斜杠让 vim 正则失效
             filesystem_watchers = {
                 -- Windows 上 Git switch/checkout 会瞬间产生大量事件。
-                -- 关闭阈值保护，交给 50ms debounce 合并后统一刷新，避免 watcher 被自动停用。
+                -- 关闭阈值保护，交给 100ms debounce 合并后统一刷新，避免 watcher 被自动停用。
                 max_events = 0,
                 debounce_delay = 100,
                 ignore_dirs = function(path)
