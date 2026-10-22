@@ -3,6 +3,12 @@
 -- 避免两个插件在 git 项目里重复画标记
 return {
   "mhinz/vim-signify",
+  -- 只在 svn 工作副本里启动 nvim 时才加载：signify 每次刷新都要起一个 shell 跑 svn，
+  -- 在 git / 普通目录里加载只会白白起进程做检测
+  -- 注意：按启动时的工作目录判断，启动后再 :cd 进 svn 目录不会补加载
+  cond = function()
+    return vim.fs.root(vim.fn.getcwd(), ".svn") ~= nil
+  end,
   event = { "BufReadPre", "BufNewFile" },
   -- init 在插件加载前执行：vim-signify 是 VimScript 插件，靠全局变量配置，
   -- 必须在它加载前设好（写在 config 里就晚了）

@@ -50,6 +50,7 @@ return {
       end
 
       require("nvchad")
+      require("config.tabufline").setup()
       require("config.colorscheme").setup()
     end,
   },

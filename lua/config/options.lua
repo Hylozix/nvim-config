@@ -65,14 +65,16 @@ vim.diagnostic.config({
 if vim.fn.has("win32") == 1 then
   -- :help shell-powershell
   -- $PSStyle / Remove-Alias -Force 是 PowerShell 7 语法，WinPS 5.1 会直接报错
+  -- -NoProfile：profile 里的 conda hook 会让每次起 shell 多花 1 秒多，
+  -- signify 等插件频繁调 shell 时会拖慢整个编辑器
   if vim.fn.executable("pwsh") == 1 then
     opt.shell = "pwsh"
     opt.shellcmdflag =
-    "-NoLogo -NonInteractive -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';$PSStyle.OutputRendering='plaintext';Remove-Alias -Force -ErrorAction SilentlyContinue tee,diff;"
+    "-NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';$PSStyle.OutputRendering='plaintext';Remove-Alias -Force -ErrorAction SilentlyContinue tee,diff;"
   else
     opt.shell = "powershell"
     opt.shellcmdflag =
-    "-NoLogo -NonInteractive -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';"
+    "-NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new();$PSDefaultParameterValues['Out-File:Encoding']='utf8';"
   end
   opt.shellredir = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode'
   opt.shellpipe = '2>&1 | %%{ "$_" } | tee %s; exit $LastExitCode'
