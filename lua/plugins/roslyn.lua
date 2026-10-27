@@ -11,14 +11,38 @@ return {
   ft = { "cs", "razor" }, -- C# 和 Razor/CSHTML 都需要 Roslyn
   opts = {
     -- 让 Roslyn 自行监听项目文件变化，保存 .csproj 后更新项目引用。
+    -- 插件在 config 里才设置它，赶不上第一个客户端；真正生效靠下面 init 里的 capabilities，
+    -- 这里保留是为了 :checkhealth roslyn 显示正确。
     filewatching = "roslyn",
   },
-  config = function(_, opts)
-    require("roslyn").setup(opts)
-    -- 敲 /// 或 <leader>ng 生成 XML 文档注释（用 Roslyn 自带的生成器，见 config/csharp_doc.lua）
-    require("config.csharp_doc").setup()
+  -- 客户端配置必须写在 init（启动时执行，早于插件加载），不能放 config：
+  -- lazy 在 FileType 事件里加载本插件，plugin/roslyn.lua 一执行 vim.lsp.enable("roslyn")，
+  -- nvim 见 did_filetype() 为真就当场启动客户端，config() 里的 vim.lsp.config 赶不上第一个客户端。
+  init = function()
     vim.lsp.config("roslyn", {
+      -- 即 filewatching = "roslyn" 的效果：不向服务器声明能替它监听文件，
+      -- 让 Roslyn 用自己的 FileSystemWatcher，改 .csproj 后自动重新加载项目。
+      -- （声明了的话会交给 nvim 的监听，Windows 上改 .csproj 服务器收不到）
+      capabilities = {
+        workspace = { didChangeWatchedFiles = { dynamicRegistration = false } },
+      },
       handlers = {
+        -- 项目重新加载后 Roslyn 会发这个通知。nvim 0.12 见服务器支持 workspace 诊断就只重拉
+        -- workspace 诊断，而 Roslyn 的 workspace 诊断不含已打开的文件，于是打开着的 .cs
+        -- 还挂着旧报错、要编辑一下才更新。这里给已打开的缓冲区补拉一次文档诊断。
+        -- （据 roslyn.nvim 的注释，nvim 0.13 已修复并移除了 _refresh，届时这段自动跳过）
+        ["workspace/diagnostic/refresh"] = function(err, result, ctx)
+          local refresh = vim.lsp.diagnostic._refresh
+          local client = vim.lsp.get_client_by_id(ctx.client_id)
+          if refresh and client then
+            for bufnr in pairs(client.attached_buffers) do
+              if vim.api.nvim_buf_is_loaded(bufnr) then
+                refresh(bufnr, ctx.client_id)
+              end
+            end
+          end
+          return vim.lsp.handlers["workspace/diagnostic/refresh"](err, result, ctx)
+        end,
         ["razor/updateHtml"] = function(_, params)
           local document = require("roslyn.razor.documentManager"):updateDocumentText(
             params.textDocument.uri, params.checksum, params.text
@@ -31,5 +55,10 @@ return {
         end,
       },
     })
+  end,
+  config = function(_, opts)
+    require("roslyn").setup(opts)
+    -- 敲 /// 或 <leader>ng 生成 XML 文档注释（用 Roslyn 自带的生成器，见 config/csharp_doc.lua）
+    require("config.csharp_doc").setup()
   end,
 }
