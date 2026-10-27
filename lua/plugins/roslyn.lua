@@ -9,22 +9,25 @@
 return {
   "seblyng/roslyn.nvim",
   ft = { "cs", "razor" }, -- C# 和 Razor/CSHTML 都需要 Roslyn
-  opts = {
-    -- 让 Roslyn 自行监听项目文件变化，保存 .csproj 后更新项目引用。
-    -- 插件在 config 里才设置它，赶不上第一个客户端；真正生效靠下面 init 里的 capabilities，
-    -- 这里保留是为了 :checkhealth roslyn 显示正确。
-    filewatching = "roslyn",
-  },
+  opts = function()
+    return {
+      -- 文件监听交给 nvim（"auto"）：新建/删除 .cs、改 .csproj 都会通知 Roslyn 重新加载项目。
+      -- nvim 0.12 在 Windows 上的监听有 bug，由 config/lsp_watchfiles.lua 修补；
+      -- 补不上时退回 Roslyn 自带的监听（"roslyn"），它只认 .csproj 改动，新建的 .cs 会被当成杂项文件。
+      -- 须与下面 init 里的 capabilities 一致（:Roslyn restart 后的新客户端用的是插件设置的值）。
+      filewatching = require("config.lsp_watchfiles").ok and "auto" or "roslyn",
+    }
+  end,
   -- 客户端配置必须写在 init（启动时执行，早于插件加载），不能放 config：
   -- lazy 在 FileType 事件里加载本插件，plugin/roslyn.lua 一执行 vim.lsp.enable("roslyn")，
   -- nvim 见 did_filetype() 为真就当场启动客户端，config() 里的 vim.lsp.config 赶不上第一个客户端。
   init = function()
     vim.lsp.config("roslyn", {
-      -- 即 filewatching = "roslyn" 的效果：不向服务器声明能替它监听文件，
-      -- 让 Roslyn 用自己的 FileSystemWatcher，改 .csproj 后自动重新加载项目。
-      -- （声明了的话会交给 nvim 的监听，Windows 上改 .csproj 服务器收不到）
+      -- true：由 nvim 监听文件并通知服务器；false：服务器用自己的监听（见上面 opts）
       capabilities = {
-        workspace = { didChangeWatchedFiles = { dynamicRegistration = false } },
+        workspace = {
+          didChangeWatchedFiles = { dynamicRegistration = require("config.lsp_watchfiles").ok },
+        },
       },
       handlers = {
         -- 项目重新加载后 Roslyn 会发这个通知。nvim 0.12 见服务器支持 workspace 诊断就只重拉
@@ -58,6 +61,8 @@ return {
   end,
   config = function(_, opts)
     require("roslyn").setup(opts)
+    -- 新建/删除 .cs 后通知 Roslyn 重新加载所属项目，否则新文件会被当成杂项文件
+    require("config.roslyn_reload").setup()
     -- 敲 /// 或 <leader>ng 生成 XML 文档注释（用 Roslyn 自带的生成器，见 config/csharp_doc.lua）
     require("config.csharp_doc").setup()
   end,
