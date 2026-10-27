@@ -15,6 +15,8 @@ return {
   },
   config = function(_, opts)
     require("roslyn").setup(opts)
+    -- 敲 /// 或 <leader>ng 生成 XML 文档注释（用 Roslyn 自带的生成器，见 config/csharp_doc.lua）
+    require("config.csharp_doc").setup()
     vim.lsp.config("roslyn", {
       handlers = {
         ["razor/updateHtml"] = function(_, params)

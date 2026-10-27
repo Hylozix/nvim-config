@@ -189,6 +189,7 @@ lua/
 | `[b` / `]b` / `<leader>bd` | 上/下一个 / 关闭 缓冲区 |
 | `<leader>wr` / `<leader>ws` | 会话搜索 / 保存 |
 | `gcc` / `gc`(选区) | 注释（nvim 内置） |
+| `<leader>ng` / C# 里敲 `///` | 生成文档注释（C# 走 Roslyn，和 VS 一样；其它语言用 neogen） |
 | `jj` | 插入模式退出到 Normal |
 | `gp` / `gP` | 粘贴 0 号寄存器（不被删除覆盖） |
 
