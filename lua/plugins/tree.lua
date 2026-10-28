@@ -11,6 +11,7 @@ return {
         local skip_watch = {
             [".vs"] = true,
             [".git"] = true,
+            [".svn"] = true, -- 每次 svn 命令都会写 wc.db，pristine 下还有 256 个子目录
             ["node_modules"] = true,
             ["bin"] = true,
             ["obj"] = true,
@@ -44,7 +45,18 @@ return {
                 max_events = 0,
                 debounce_delay = 100,
                 ignore_dirs = function(path)
-                    return skip_watch[vim.fn.fnamemodify(path, ":t")] == true
+                    -- 只看文件树根目录以下的部分：根目录本身位于 bin、Release 之类目录里时，
+                    -- 不能因此整棵树都不监视
+                    local root = require("nvim-tree.core").get_cwd()
+                    if root and path:sub(1, #root) == root then
+                        path = path:sub(#root + 1)
+                    end
+                    -- 任意一层命中就跳过：nvim-tree 对每个子目录单独调用这里，
+                    -- 只看最后一段的话 .svn\pristine\xx、obj\Debug\net8.0 这些子目录照样会被监视
+                    for part in path:gmatch("[^/\\]+") do
+                        if skip_watch[part] then return true end
+                    end
+                    return false
                 end,
             },
             reload_on_bufenter = true,
