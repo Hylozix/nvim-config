@@ -16,22 +16,36 @@ if not ok or type(watchfiles._watchfunc) ~= "function" then
   return M -- 内部实现变了，不冒险打补丁
 end
 
+local Deleted = require("vim._watch").FileChangeType.Deleted
+
 local orig = watchfiles._watchfunc
 watchfiles._watchfunc = function(base_dir, opts, callback)
   local norm_base = vim.fs.normalize(base_dir)
-  -- 两种写法一致（比如以后 nvim 修了），原样交回
-  if norm_base == base_dir then
-    return orig(base_dir, opts, callback)
-  end
   local include = opts.include_pattern
+  local cancel, stopped
+  -- 原 cancel 第二次调用会对已关闭的句柄 stop 报错，这里只放行一次
+  local function stop()
+    if stopped then return end
+    stopped = true
+    cancel()
+  end
   -- include_pattern 也是按注册时的写法拼的，原函数里会把所有事件都过滤掉，挪到下面换完路径再匹配
-  return orig(base_dir, { uvflags = opts.uvflags, exclude_pattern = opts.exclude_pattern }, function(path, change_type)
+  cancel = orig(base_dir, { uvflags = opts.uvflags, exclude_pattern = opts.exclude_pattern }, function(path, change_type)
+    if stopped then return end
+    -- 被监听的目录本身被删了（比如 Roslyn 清理 Temp\MetadataAsSource 下的反编译目录），
+    -- Windows 上 libuv 会反复报同一个 rename 事件并立刻重新挂监听，每秒几万次回调占满主循环，
+    -- 搜索、yank 高亮这些全都卡住。目录都没了，监听也没用，直接停掉。
+    if change_type == Deleted and not vim.uv.fs_stat(norm_base) then
+      stop()
+      return
+    end
     if path:sub(1, #norm_base) == norm_base then
       path = base_dir .. path:sub(#norm_base + 1)
     end
     if include and include:match(path) == nil then return end
     callback(path, change_type)
   end)
+  return stop
 end
 
 M.ok = true
